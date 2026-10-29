@@ -1,6 +1,38 @@
 A usable default keymap for the Ferris keyboard
 ===============================================
 
+Building and flashing (hvoigt's Sweep)
+--------------------------------------
+
+This keymap is used on a Ferris Sweep with an Elite-C on the left half and a
+Pro Micro on the right half. Run all commands from the root of the qmk repo.
+
+Update the submodules after merging upstream changes:
+
+    qmk git-submodule
+
+Compile:
+
+    qmk compile -kb ferris/sweep -km hvoigt
+
+Flash each half separately with its own USB cable. Handedness is stored in
+EEPROM (`EE_HANDS`), so use the split bootloader targets. This has to be
+redone after QMK updates that reset the EEPROM; otherwise both halves think
+they are on the same side and the keyboard does not work.
+
+    # left half (Elite-C, Atmel DFU bootloader)
+    qmk flash -kb ferris/sweep -km hvoigt -e BOOTLOADER=atmel-dfu -bl dfu-split-left
+
+    # right half (Pro Micro, Caterina bootloader)
+    qmk flash -kb ferris/sweep -km hvoigt -bl avrdude-split-right
+
+Start the command first, then put the controller into bootloader mode by
+double-tapping reset (Pro Micro) or pressing reset once (Elite-C).
+
+`BOOTLOADER=atmel-dfu` is needed for the Elite-C because the Sweep defaults to
+the Pro Micro's Caterina bootloader; it makes Bootmagic (holding the outer top
+key while plugging in) jump into the correct bootloader.
+
 Keymaps in general are quite personal, so it is difficult to come up with a default that will suit every user.
 
 This keymap makes heavy use of keys behaving differently when tapped and held, so that all the keys one may need remain accessible despite the low number of thumb keys.
